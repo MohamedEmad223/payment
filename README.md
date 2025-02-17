@@ -1,4 +1,4 @@
-# checkout_payment_ui
+# Pay App
 
 A new Flutter project.
 
