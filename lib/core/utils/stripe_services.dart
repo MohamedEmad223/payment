@@ -2,17 +2,27 @@ import 'package:checkout_payment_ui/Features/checkout/data/models/payment_intent
 import 'package:checkout_payment_ui/Features/checkout/data/models/payment_intent_model/payment_intent_model.dart';
 import 'package:checkout_payment_ui/core/utils/api_services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+
 
 class StripeServices {
   final ApiServices _apiServices;
   final PaymentIntentInputModel _paymentIntentInputModel;
   StripeServices(this._apiServices, this._paymentIntentInputModel);
-  createPaymentIntent(PaymentIntentInputModel paymentIntentInputModel) async {
+  Future<PaymentIntentModel> createPaymentIntent(
+      PaymentIntentInputModel paymentIntentInputModel) async {
     var respone = await _apiServices.post(
-        url: 'https://api.stripe.com/v1/payment_intents',
+        url: dotenv.env['STRIPE_PAYMENT_INTENT_URL']!,
         body: _paymentIntentInputModel.tojson(),
-        token: dotenv.env['.env']);
+        token: dotenv.env['SECRET_KEY']!);
     var paymentIntentModel = PaymentIntentModel.fromJson(respone.data);
     return paymentIntentModel;
+  }
+
+  Future initPaymentSheet({required String paymentIntentClintSecret}) async {
+    Stripe.instance.initPaymentSheet(paymentSheetParameters: SetupPaymentSheetParameters(
+      paymentIntentClientSecret: paymentIntentClintSecret,
+      merchantDisplayName: 'Flutter Stripe Store',
+    ));
   }
 }
