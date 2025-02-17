@@ -25,4 +25,10 @@ class StripeServices {
       merchantDisplayName: 'Flutter Stripe Store',
     ));
   }
+
+  Future presentPaymentSheet() async {
+    await Stripe.instance.presentPaymentSheet();
+  } 
+
+  
 }
