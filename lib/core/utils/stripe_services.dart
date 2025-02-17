@@ -4,7 +4,6 @@ import 'package:checkout_payment_ui/core/utils/api_services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-
 class StripeServices {
   final ApiServices _apiServices;
   final PaymentIntentInputModel _paymentIntentInputModel;
@@ -20,7 +19,8 @@ class StripeServices {
   }
 
   Future initPaymentSheet({required String paymentIntentClintSecret}) async {
-    Stripe.instance.initPaymentSheet(paymentSheetParameters: SetupPaymentSheetParameters(
+    Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
       paymentIntentClientSecret: paymentIntentClintSecret,
       merchantDisplayName: 'Flutter Stripe Store',
     ));
@@ -28,7 +28,14 @@ class StripeServices {
 
   Future presentPaymentSheet() async {
     await Stripe.instance.presentPaymentSheet();
-  } 
+  }
 
-  
+  makePayment({
+    required PaymentIntentInputModel paymentIntentInputModel,
+  }) async {
+    var paymentIntentModel = await createPaymentIntent(paymentIntentInputModel);
+    await initPaymentSheet(
+        paymentIntentClintSecret: paymentIntentModel.clientSecret!);
+    await presentPaymentSheet();
+  }
 }
